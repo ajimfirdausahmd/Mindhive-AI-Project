@@ -189,7 +189,7 @@ def products_node(state: AppState) -> AppState:
     try:
         if not q:
             raise ValueError("No product query provided.")
-        with httpx.Client(timeout=8.0) as client:
+        with httpx.Client(timeout=20.0) as client:
             r = client.get(PRODUCTS_URL, params={"query": q, "k": 5})
         if r.status_code != 200:
             detail = r.json().get("detail", r.text)
@@ -227,7 +227,7 @@ def outlets_node(state: AppState) -> AppState:
         else:
             raise ValueError("Missing city or outlet information.")
 
-        with httpx.Client(timeout=8.0) as client:
+        with httpx.Client(timeout=20.0) as client:
             r = client.get(OUTLETS_URL, params={"query": query})
 
         if r.status_code != 200:

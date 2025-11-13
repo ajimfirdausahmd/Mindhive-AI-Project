@@ -240,7 +240,7 @@ To demonstrate the agentic planning, memory behavior, and tool integration, belo
 
 This screenshot shows the end-to-end interaction between the user and the agent, including the message bubbles, UI layout, and multi-turn flow.
 
-![Chat UI](img/SS1.JPG)
+<img src="img/SS1.JPG" width="450">
 
 ### 🖼️ Screenshot B — Agent Metadata (Intent / Tool / Slots)
 
@@ -254,7 +254,7 @@ It visualizes how the LangGraph planner resolved:
 
 This is required by the assessment to verify tool routing and memory behavior.
 
-![Metadata](img/SS2.JPG)
+<img src="img/SS2.JPG" width="450">
 
 ### 5. Key Trade-offs
 

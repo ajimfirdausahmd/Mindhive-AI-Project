@@ -21,7 +21,7 @@ This project include
 - npm or yarn
 - Git
 
-    Clone the repository:
+Clone the repository:
 
     git clone https://github.com/ajimfirdausahmd/mindhive-assessment.git
     cd mindhive-assessment

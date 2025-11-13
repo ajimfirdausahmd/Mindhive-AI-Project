@@ -46,8 +46,8 @@ def detect_intent(text: str) -> str:
     if any(k in t for k in product_keys) or "drink" in t or "beverage" in t:
         return "products"
 
-    if re.search(r"\b(outlet|branch|store|opening hours?|closing time|hours?)\b", t):
-        return "outlet_query"
+    if re.search(r"\boutlet(s)?\b|\bbranch(es)?\b|\bstore(s)?\b|\blocation(s)?\b|\bopening hours?\b|\bclosing time\b|\bhours?\b", t):
+    return "outlet_query"
 
     if re.search(r"\d+\s*[-+*/]\s*\d+", t):
         return "calc"

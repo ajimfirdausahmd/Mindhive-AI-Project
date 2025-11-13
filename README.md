@@ -231,38 +231,61 @@ Request body
     "session_id": "demo-user",
     "message": "Show opening hours for Wangsa Maju in Kuala Lumpur"
     }
-    
 
-### 4. Key Trade-offs
+ ### 4. Screenshots
+
+To demonstrate the agentic planning, memory behavior, and tool integration, below are screenshots captured from the React chat UI.
+
+### 🖼️ Screenshot A — Chat Interface (Full Conversation)
+
+This screenshot shows the end-to-end interaction between the user and the agent, including the message bubbles, UI layout, and multi-turn flow.
+
+![Chat UI](img/SS1.JPG)
+
+### 🖼️ Screenshot B — Agent Metadata (Intent / Tool / Slots)
+
+This screenshot shows the internal reasoning that the frontend exposes after each bot message.  
+It visualizes how the LangGraph planner resolved:
+
+- the detected **intent**
+- the selected **tool**
+- the extracted **slots** (city, outlet, expr, product query)
+- any **errors** during tool execution
+
+This is required by the assessment to verify tool routing and memory behavior.
+
+![Metadata](img/SS2.JPG)
+
+### 5. Key Trade-offs
 
 This assessment highlights engineering decision-making.
 Here are the major choices and trade-offs:
 
-#### 4.1 FAISS vs Pinecone
+#### 5.1 FAISS vs Pinecone
 
 - Chosen: FAISS (local)
 - Reason: Zero cost, easy to run locally for reviewers
 - Trade-off: Not horizontally scalable like Pinecone / Weaviate
 
-#### 4.2 SQLite vs PostgreSQL
+#### 5.2 SQLite vs PostgreSQL
 
 - Chosen: SQLite
 - Reason: Simple, file-based, included in repo
 - Trade-off: Not suitable for high write concurrency
 
-#### 4.3 Rule-based Intent Detection vs LLM-based Router
+#### 5.3 Rule-based Intent Detection vs LLM-based Router
 
 - Chosen: Lightweight rule-based classifier
 - Reason: Predictable, fast, easy to test
 - Trade-off: Less flexible for ambiguous queries
 
-#### 4.4 Custom Planner vs LangChain Router
+#### 5.4 Custom Planner vs LangChain Router
 
 - Chosen: Manual planner in LangGraph
 - Reason: High clarity; matches assessment’s “agentic planning” requirement
 - Trade-off: More code compared to using built-in agents
 
-#### 4.5 Render + Vercel Deployment
+#### 5.5 Render + Vercel Deployment
 
 Chosen:
 

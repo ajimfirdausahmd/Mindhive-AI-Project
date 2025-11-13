@@ -42,29 +42,23 @@ def outlets(query: str = Query(..., description="Outlets of ZUS in KL and Selang
 
         sql_query = LLM.invoke(prompt).content.strip()
 
-        # --- Allow normal SQL endings: strip one trailing semicolon if present ---
         sql_query = re.sub(r"^```(?:sql)?\s*|\s*```$", "", sql_query, flags=re.IGNORECASE | re.DOTALL).strip()
-        # remove a single trailing semicolon if any
         sql_query = re.sub(r";\s*$", "", sql_query)
 
         lower = sql_query.lower()
 
-        # debug print (optional)
         print("DEBUG SQL =>", repr(sql_query))
 
-        # --- Enforce exact projection & table, nothing else ---
         if not re.match(
             r"^select\s+city\s*,\s*outlet\s*,\s*open_time\s*,\s*close_time\s+from\s+outlets\b",
             lower
         ):
             raise ValueError(f"SQL must select city,outlet,open_time,close_time from outlets. Got: {sql_query}")
 
-        # --- Block truly dangerous stuff (semicolon NOT forbidden) ---
         forbidden = ["pragma", "attach", "insert", "update", "delete", "drop", "alter", "union", "--", "/*", "*/"]
         if any(tok in lower for tok in forbidden):
             raise ValueError(f"Unsafe SQL generated: {sql_query}")
 
-        # --- Execute ---
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute(sql_query)

@@ -29,7 +29,6 @@ class ProductResult(BaseModel):
     hits: List[ProductHit]
     summary: Optional[str] = None
 
-#  Lazy singletons
 _vectordb = None
 _embeddings = None
 _llm = None
@@ -73,7 +72,6 @@ def products(
                 chunk_preview=preview + ("..." if len(d.page_content) > 260 else "")
             ))
 
-        # Optional short summary (only if API key present)
         llm = _get_llm()
         summary = None
         if llm and hits:

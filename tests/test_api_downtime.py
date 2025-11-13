@@ -15,21 +15,17 @@ def test_products_api_downtime(client: TestClient, monkeypatch):
     from api.routers import products as products_router 
 
     def fake_handle_products_query(*args, **kwargs):
-        # Simulate upstream failure
         raise HTTPException(status_code=500, detail="Upstream service down")
 
-    # Replace real logic with failing stub
     monkeypatch.setattr(
         products_router, "handle_products_query", fake_handle_products_query
     )
 
     response = client.get("/api/v1/products",params={"query": "Show me tumblers"})
-    # You might wrap it and return 503 with friendly message
     assert response.status_code in (500, 503)
 
     data = response.json()
     msg = str(data).lower()
-    # Recommended: your real code returns a friendly message like "service unavailable"
     assert "down" in msg or "unavailable" in msg or "try again" in msg
 
 

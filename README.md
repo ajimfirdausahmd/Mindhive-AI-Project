@@ -57,7 +57,7 @@ Run backend locally
 #### 1.5 Running Tests
 
     cd tests
-    pytest
+    pytest -q
 
 Covers:
 
@@ -173,36 +173,96 @@ Features:
     ├── test_api_downtime.py          # Simulated HTTP 500
     └── test_malicious_payload.py     # SQL injection blocked
 
-### 3. Key Trade-offs
+### 3. API Specification
+
+This section documents all backend endpoints used by the Mindhive AI Assistant, including the Calculator tool, Products RAG pipeline, Outlets Text2SQL pipeline, and Chat (LangGraph agent) endpoint.
+
+#### 3.1 Calculator API
+
+Simple arithmetic evaluator (e.g. 123, 5+92).
+
+Success response
+
+    {
+     "expr": "12*3",
+     "result": 36
+    }
+
+#### 3.2 Products API (RAG over FAISS)
+
+Retrieves drinkware information from the FAISS vector store created from scraped ZUS Coffee product pages.
+
+Success response
+
+    {
+       "summary": "Here are some drinkware options:",
+       "hits": [
+         {
+          "title": "ZUS Thermo Steel 500ml",
+           "price_rm": 29.9,
+           "url": "https://zuscoffee.com/product/thermo-steel-500ml"
+         }
+      ]
+    }
+
+#### 3.3 Outlets API (Text2SQL → SQLite)
+
+Converts natural language questions into SQL using a controlled Text2SQL parser.
+Executes against outlets.db and returns store hours.
+
+Success response
+
+     [
+        {
+            "city": "Kuala Lumpur",
+            "outlet": "Wangsa Maju",
+            "open_time": "09:00",
+            "close_time": "22:00"
+        }
+     ]
+
+#### 3.4 Chat API (LangGraph Agent)
+
+Main entry point used by frontend UI.
+
+Request body 
+
+    {
+    "session_id": "demo-user",
+    "message": "Show opening hours for Wangsa Maju in Kuala Lumpur"
+    }
+    
+
+### 4. Key Trade-offs
 
 This assessment highlights engineering decision-making.
 Here are the major choices and trade-offs:
 
-#### 3.1 FAISS vs Pinecone
+#### 4.1 FAISS vs Pinecone
 
 - Chosen: FAISS (local)
 - Reason: Zero cost, easy to run locally for reviewers
 - Trade-off: Not horizontally scalable like Pinecone / Weaviate
 
-#### 3.2 SQLite vs PostgreSQL
+#### 4.2 SQLite vs PostgreSQL
 
 - Chosen: SQLite
 - Reason: Simple, file-based, included in repo
 - Trade-off: Not suitable for high write concurrency
 
-#### 3.3 Rule-based Intent Detection vs LLM-based Router
+#### 4.3 Rule-based Intent Detection vs LLM-based Router
 
 - Chosen: Lightweight rule-based classifier
 - Reason: Predictable, fast, easy to test
 - Trade-off: Less flexible for ambiguous queries
 
-#### 3.4 Custom Planner vs LangChain Router
+#### 4.4 Custom Planner vs LangChain Router
 
 - Chosen: Manual planner in LangGraph
 - Reason: High clarity; matches assessment’s “agentic planning” requirement
 - Trade-off: More code compared to using built-in agents
 
-#### 3.5 Render + Vercel Deployment
+#### 4.5 Render + Vercel Deployment
 
 Chosen:
 

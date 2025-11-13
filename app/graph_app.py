@@ -38,38 +38,47 @@ llm = ChatOpenAI(model="gpt-4o-mini",api_key=os.getenv("OPENAI_API_KEY"))
 def detect_intent(text: str) -> str:
     t = text.lower().strip()
 
-    # 1. Products
     product_keys = ["drinkware","bottle","tumbler","cup","thermos","insulated","vacuum"]
     if any(k in t for k in product_keys) or "drink" in t or "beverage" in t:
         return "products"
 
-    # 2. Outlets 
     if re.search(r"\b(outlet|branch|store|opening hours?|closing time|hours?)\b", t):
         return "outlet_query"
 
-    # 3. Calculator
     if re.search(r"\d+\s*[-+*/]\s*\d+", t):
         return "calc"
 
-    # 4. Fallback 
     return "chitchat"
 
 
-PRODUCT_KEYWORDS = {
-    "drinkware","bottle","tumbler","cup","thermos","insulated","vacuum"
-}
+PRODUCT_KEYWORDS = {"drinkware","bottle","tumbler","cup","thermos","insulated","vacuum"}
+
+CITY_PATTERNS = {r"\bkuala\s+lumpur\b|\bkl\b": "Kuala Lumpur", 
+    r"\bpetaling\s+jaya\b|\bpj\b": "Petaling Jaya", 
+    r"\bampang\b": "Ampang",}
 
 def update_slots(slots: Dict[str, Any], text: str) -> Dict[str, Any]:
     """Extract structured details from the latest user text and merge into slots."""
     t = text.lower()
     new = dict(slots)
 
-    # City / outlet 
-    if re.search(r"\bkuala\s+lumpur\b|\bkl\b", t):
-        new["city"] = "Kuala Lumpur"
+    # Outlet
+    for pattern, name in CITY_PATTERNS.items():
+        if re.search(pattern, t):
+            new["city"] = name
+            break
 
     if re.search(r"\bwangsa\s+maju\b", t):
         new["outlet"] = "Wangsa Maju"
+
+    # Petaling Jaya → Damansara Perdana
+    if re.search(r"\bdamansara\s+perdana\b", t):
+        new["outlet"] = "Damansara Perdana"
+
+    # Ampang → Bandar Baru Ampang
+    if re.search(r"\bbandar\s+baru\s+ampang\b", t):
+        new["outlet"] = "Bandar Baru Ampang"
+
 
     # Calculator expression 
     expr_match = re.search(r"(?<!\w)(-?\d+(?:\s*[-+*/]\s*-?\d+)+)(?!\w)", t)
@@ -78,12 +87,11 @@ def update_slots(slots: Dict[str, Any], text: str) -> Dict[str, Any]:
     else:
         new.pop("expr", None)
 
-    # --- Product query 
+    # Product query 
     if any(k in t for k in PRODUCT_KEYWORDS) or re.search(r"\b(drink|beverage)\b", t):
         new["product_query"] = text.strip()
 
     return new
-
 
 # PLANNER NODE 
 
@@ -151,11 +159,9 @@ def calculator_node(state: AppState) -> AppState:
         if not expr:
             raise ValueError("No expression provided.")
 
-        # Call the API with a short timeout and robust error handling
         with httpx.Client(timeout=5.0) as client:
             r = client.get(CALC_URL, params={"expr": expr})
         if r.status_code != 200:
-            # API returned a helpful error message in JSON
             try:
                 detail = r.json().get("detail")
             except Exception:
@@ -208,8 +214,6 @@ def outlets_node(state: AppState) -> AppState:
     try:
         if not city and not outlet:
             raise ValueError("Missing city or outlet information.")
-
-        # Build natural query string
         if city and outlet:
             query = f"Show opening hours for {outlet} in {city}"
         elif city:
@@ -246,7 +250,6 @@ def outlets_node(state: AppState) -> AppState:
 
     return state
 
-
 # RESPONDER NODE 
 
 def respond_node(state: AppState) -> AppState:
@@ -257,10 +260,8 @@ def respond_node(state: AppState) -> AppState:
     tool_result = state.get("tool_result")
     error = state.get("error")
 
-    # Ensure messages list exists
     state.setdefault("messages", [])
 
-    # 1) If we’re clarifying, reply deterministically (no LLM needed)
     if next_action == "ask_clarify":
         if intent == "outlet_query":
             if not slots.get("city"):
@@ -279,7 +280,6 @@ def respond_node(state: AppState) -> AppState:
         state["messages"].append(AIMessage(content=text))
         return state
 
-    # 2) If we used a tool, format the result deterministically
     if next_action == "use_tool":
         if error:
             text = f"{error}. Could you rephrase or provide the correct info?"
@@ -297,7 +297,7 @@ def respond_node(state: AppState) -> AppState:
             if summary:
                 text = summary
             elif items:
-                top = items[:5]  # trim list
+                top = items[:5]  
                 lines = []
                 for it in top:
                     title = it.get("title") or "Unknown item"
@@ -320,11 +320,9 @@ def respond_node(state: AppState) -> AppState:
             state["messages"].append(AIMessage(content=text))
             return state
 
-        # Fallback if tool_name or result missing
         state["messages"].append(AIMessage(content="I couldn’t use the tool just now. Could you rephrase or try again?"))
         return state
 
-    # 3) reply_only: optionally use LLM for small talk/helpful guide
     if next_action == "reply_only":
         sys_prompt = (
             "You are a helpful ZUS Coffee assistant. Be concise. "
@@ -344,7 +342,6 @@ def respond_node(state: AppState) -> AppState:
         state["messages"].append(AIMessage(content=ai_msg.content.strip() or "How can I help you?"))
         return state
 
-    # 4) Ultimate fallback
     state["messages"].append(AIMessage(content="How can I help you?"))
     return state
 
@@ -381,7 +378,7 @@ def build_app():
     return graph.compile(checkpointer=memory)
 
 
-# ---------- LOCAL DEMO ----------
+# Local Demo
 
 if __name__ == "__main__":
     app = build_app()

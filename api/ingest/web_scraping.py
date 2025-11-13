@@ -31,7 +31,7 @@ def collect_product_links(collection_url):
     html = get_html(collection_url)
     soup = BeautifulSoup(html, "html.parser")
     links = set()
-    # Any anchor to /products/<handle>
+
     for a in soup.select('a[href^="/products/"]'):
         href = a.get("href")
         if href and "/products/" in href:
@@ -75,31 +75,25 @@ def extract_variants_block(soup):
     return list(uniq.values())
 
 def extract_list_after_heading(soup, heading_text):
-    # Find a heading text and capture following <li> items under that section
     h = soup.find(string=lambda s: isinstance(s, str) and heading_text.lower() in s.lower())
     if not h:
         return []
-    # Walk up to a reasonable container, then gather list items near it
     container = h.parent
     for _ in range(5):
         if container.find_all("li"):
             break
         container = container.parent
     items = [li.get_text(" ", strip=True) for li in container.find_all("li")]
-    # Filter obviously bad items
     return [i for i in items if 2 <= len(i) <= 200]
 
 def extract_main_image(soup):
-    # Prefer the first meaningful product image (not icons)
     for img in soup.select("img[src]"):
         alt = (img.get("alt") or "").lower()
         src = img["src"]
         if not src.startswith("http"):
             src = urljoin(BASE, src)
-        # Skip tiny icons
         if any(k in alt for k in ["logo", "icon"]) or ("svg" in src):
             continue
-        # Heuristic: product pages usually include many gallery images; take the first decent one
         return src
     return None
 

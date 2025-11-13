@@ -46,7 +46,7 @@ def main():
     if not rows:
         raise RuntimeError("drinkware.jsonl is empty.")
 
-    # Build Documents with metadata (handy for UI and summaries)
+    
     docs = []
     for r in rows:
         text = row_to_text(r)
@@ -61,9 +61,10 @@ def main():
     splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
     chunks = splitter.split_documents(docs)
 
-    # Pick embeddings
+    # embeddings
     embeddings = OpenAIEmbeddings()                      
 
+    #Vector Store
     vectordb = FAISS.from_documents(chunks, embedding=embeddings)
     vectordb.save_local(INDEX_DIR)
     print(f"Saved FAISS index to {INDEX_DIR} (chunks: {len(chunks)})")

@@ -42,7 +42,6 @@ def test_outlets_unsafe_sql_guard_message(client: TestClient):
 
     response = client.get("/api/v1/outlets", params={"query": dangerous_query})
 
-    # For your current implementation, this returns 200 with safe SELECT.
     assert response.status_code in (200, 400, 404, 422)
 
     data = response.json()

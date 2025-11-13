@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import chat, calculator, outlets, products
+from backend.api.routers import chat, calculator, outlets, products
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Mindhive Assessment API", version="1.0")

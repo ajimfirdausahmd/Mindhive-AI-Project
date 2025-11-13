@@ -236,13 +236,13 @@ Request body
 
 To demonstrate the agentic planning, memory behavior, and tool integration, below are screenshots captured from the React chat UI.
 
-### 🖼️ Screenshot A — Chat Interface (Full Conversation)
+#### Screenshot A — Chat Interface (Full Conversation)
 
 This screenshot shows the end-to-end interaction between the user and the agent, including the message bubbles, UI layout, and multi-turn flow.
 
 <img src="img/SS1.JPG" width="450">
 
-### 🖼️ Screenshot B — Agent Metadata (Intent / Tool / Slots)
+#### Screenshot B — Agent Metadata (Intent / Tool / Slots)
 
 This screenshot shows the internal reasoning that the frontend exposes after each bot message.  
 It visualizes how the LangGraph planner resolved:

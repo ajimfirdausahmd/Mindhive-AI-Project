@@ -149,3 +149,65 @@ Tool Nodes
 Responder Node
 
 Turns internal tool output into natural language.
+
+#### 2.4 Frontend Architecture
+
+Located under:
+
+    frontend/
+
+Features:
+
+- Chat UI with threading, avatars, timestamps
+- Multiline composer (Enter = send, Shift+Enter = newline)
+- Quick commands (/calc, /products, /outlets, /reset)
+- Conversation persistence in localStorage
+- Calls backend via VITE_BACKEND_URL
+- Deployed via Vercel.
+
+#### 2.5 Tests
+
+    tests/
+    │
+    ├── test_missing_params.py        # Missing city/outlet/expr
+    ├── test_api_downtime.py          # Simulated HTTP 500
+    └── test_malicious_payload.py     # SQL injection blocked
+
+### 3. Key Trade-offs
+
+This assessment highlights engineering decision-making.
+Here are the major choices and trade-offs:
+
+#### 3.1 FAISS vs Pinecone
+
+Chosen: FAISS (local)
+Reason: Zero cost, easy to run locally for reviewers
+Trade-off: Not horizontally scalable like Pinecone / Weaviate
+
+#### 3.2 SQLite vs PostgreSQL
+
+Chosen: SQLite
+Reason: Simple, file-based, included in repo
+Trade-off: Not suitable for high write concurrency
+
+#### 3.3 Rule-based Intent Detection vs LLM-based Router
+
+Chosen: Lightweight rule-based classifier
+Reason: Predictable, fast, easy to test
+Trade-off: Less flexible for ambiguous queries
+
+#### 3.4 Custom Planner vs LangChain Router
+
+Chosen: Manual planner in LangGraph
+Reason: High clarity; matches assessment’s “agentic planning” requirement
+Trade-off: More code compared to using built-in agents
+
+#### 3.5 Render + Vercel Deployment
+
+Chosen:
+
+- Backend → Render
+- Frontend → Vercel
+
+Reason: Best pairing for FastAPI + React deployment
+Trade-off: Cross-domain CORS, two deployment targets

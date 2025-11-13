@@ -1,0 +1,23 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+*.env
+
+# FastAPI / LangGraph temporary files
+api/__pycache__/
+app/__pycache__/
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+
+# OS junk files
+.DS_Store
+Thumbs.db

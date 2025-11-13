@@ -61,10 +61,10 @@ Run backend locally
 
 Covers:
 
--API downtime (HTTP 500)
--Missing parameters in queries
--SQL injection / malicious payloads
--Sequential memory flow
+- API downtime (HTTP 500)
+- Missing parameters in queries
+- SQL injection / malicious payloads
+- Sequential memory flow
 
 ### 2 Architecture Overview
 
@@ -120,31 +120,31 @@ Located at:
 
 Contains:
 
--`State`: Representation (`AppState`)
--`messages`: Conversation history
--`slots`: Extracted structured memory (city, outlet, expr, query)
--`intent`: Current intent
--`next_action`: Planner decision (reply, ask, use tool)
--`tool_result`: Data returned from tools
--`error`: Error info for unhappy flows
+- `State`: Representation (`AppState`)
+- `messages`: Conversation history
+- `slots`: Extracted structured memory (city, outlet, expr, query)
+- `intent`: Current intent
+- `next_action`: Planner decision (reply, ask, use tool)
+- `tool_result`: Data returned from tools
+- `error`: Error info for unhappy flows
 
 Planner Node
 
 Decides whether to:
 
--Ask for missing info
--Call calculator
--Call RAG
--Call Text2SQL
--Or finish with LLM small talk
+- Ask for missing info
+- Call calculator
+- Call RAG
+- Call Text2SQL
+- Or finish with LLM small talk
 
 This is your agentic orchestrator.
 
 Tool Nodes
 
--`calculator_node`
--`products_node`
--`outlets_node`
+- `calculator_node`
+- `products_node`
+- `outlets_node`
 
 Responder Node
 

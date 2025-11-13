@@ -42,7 +42,7 @@ llm = ChatOpenAI(model="gpt-4o-mini",api_key=os.getenv("OPENAI_API_KEY"))
 def detect_intent(text: str) -> str:
     t = text.lower().strip()
 
-    product_keys = ["drinkware","bottle","tumbler","cup","thermos","insulated","vacuum"]
+    product_keys = ["drinkware","bottle","tumbler","cup","thermos","insulated","vacuum","product","products"]
     if any(k in t for k in product_keys) or "drink" in t or "beverage" in t:
         return "products"
 

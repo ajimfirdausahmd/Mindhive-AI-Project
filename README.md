@@ -180,27 +180,27 @@ Here are the major choices and trade-offs:
 
 #### 3.1 FAISS vs Pinecone
 
-Chosen: FAISS (local)
-Reason: Zero cost, easy to run locally for reviewers
-Trade-off: Not horizontally scalable like Pinecone / Weaviate
+- Chosen: FAISS (local)
+- Reason: Zero cost, easy to run locally for reviewers
+- Trade-off: Not horizontally scalable like Pinecone / Weaviate
 
 #### 3.2 SQLite vs PostgreSQL
 
-Chosen: SQLite
-Reason: Simple, file-based, included in repo
-Trade-off: Not suitable for high write concurrency
+- Chosen: SQLite
+- Reason: Simple, file-based, included in repo
+- Trade-off: Not suitable for high write concurrency
 
 #### 3.3 Rule-based Intent Detection vs LLM-based Router
 
-Chosen: Lightweight rule-based classifier
-Reason: Predictable, fast, easy to test
-Trade-off: Less flexible for ambiguous queries
+- Chosen: Lightweight rule-based classifier
+- Reason: Predictable, fast, easy to test
+- Trade-off: Less flexible for ambiguous queries
 
 #### 3.4 Custom Planner vs LangChain Router
 
-Chosen: Manual planner in LangGraph
-Reason: High clarity; matches assessment’s “agentic planning” requirement
-Trade-off: More code compared to using built-in agents
+- Chosen: Manual planner in LangGraph
+- Reason: High clarity; matches assessment’s “agentic planning” requirement
+- Trade-off: More code compared to using built-in agents
 
 #### 3.5 Render + Vercel Deployment
 
@@ -209,5 +209,5 @@ Chosen:
 - Backend → Render
 - Frontend → Vercel
 
-Reason: Best pairing for FastAPI + React deployment
-Trade-off: Cross-domain CORS, two deployment targets
+- Reason: Best pairing for FastAPI + React deployment
+- Trade-off: Cross-domain CORS, two deployment targets

@@ -14,9 +14,13 @@ import re
 
 load_dotenv()
 
-CALC_URL = "http://127.0.0.1:8000/api/v1/calculator"
-PRODUCTS_URL = "http://127.0.0.1:8000/api/v1/products"
-OUTLETS_URL = "http://127.0.0.1:8000/api/v1/outlets"
+BACKEND_BASE_URL = os.getenv(
+    "BACKEND_BASE_URL",
+    "http://127.0.0.1:8000",)
+
+CALC_URL = f"{BACKEND_BASE_URL}/api/v1/calculator"
+PRODUCTS_URL = f"{BACKEND_BASE_URL}/api/v1/products"
+OUTLETS_URL = f"{BACKEND_BASE_URL}/api/v1/outlets"
 
 
 #State

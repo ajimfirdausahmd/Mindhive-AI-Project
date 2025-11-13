@@ -5,6 +5,8 @@ from backend.api.routers import chat, calculator, outlets, products
 def create_app() -> FastAPI:
     app = FastAPI(title="Mindhive Assessment API", version="1.0")
 
+    origins = ["*"]
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

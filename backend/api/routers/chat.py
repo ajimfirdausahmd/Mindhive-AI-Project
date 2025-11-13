@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
-from app.graph_app import build_app  # import from sibling package "app"
+from app.graph_app import build_app  
 
 router = APIRouter()
 graph = build_app()  
